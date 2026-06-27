@@ -7,6 +7,7 @@
 #include "esp_heap_caps.h"
 #include "esp_log.h"
 #include "esp_ota_ops.h"
+#include "esp_phy_init.h"
 #include "esp_sleep.h"
 #include "esp_system.h"
 #include "esp_timer.h"
@@ -334,6 +335,11 @@ extern "C" void app_main(void) {
 #ifndef QEMU_BUILD
   // Unmount SD card and release CS pin to minimise sleep current.
   sd_deinit();
+
+  // Disable RF PHY hardware (Wi-Fi + BT) — the ESP32-C3 PHY draws
+  // ~10-20 mA in deep sleep if not explicitly powered down.
+  esp_phy_disable(PHY_MODEM_WIFI);
+  esp_phy_disable(PHY_MODEM_BT);
 
   // Enter deep sleep; wake on power button press (active LOW, GPIO 3).
   esp_sleep_enable_gpio_wakeup_on_hp_periph_powerdown(1ULL << kPowerPin, ESP_GPIO_WAKEUP_GPIO_LOW);

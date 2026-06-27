@@ -54,3 +54,10 @@ CONFIG_LIBC_LOCKS_PLACE_IN_IRAM=n
 # We don't use esp_timer callbacks or event loops heavily
 CONFIG_ESP_TIMER_TASK_STACK_SIZE=2048
 CONFIG_ESP_SYSTEM_EVENT_TASK_STACK_SIZE=2048
+
+# --- Power: disable unused RF subsystem (Wi-Fi/BT never used) ---
+# The ESP32-C3 RF PHY draws ~10-20 mA even in deep sleep if not disabled.
+# Note: ESP_WIFI_ENABLED / ESP_PHY_ENABLED are invisible Kconfig symbols
+# with "default y if SOC_*_SUPPORTED" — they can't be overridden via
+# sdkconfig.defaults. We disable the PHY at runtime instead (see main.cpp).
+CONFIG_ESP_SLEEP_POWER_DOWN_FLASH=y
